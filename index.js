@@ -33,8 +33,12 @@ const Package = require('./package.json')
 let CONFIG = {}
 
 async function validate(token) {
-  const tokens = token.split('.')
-  console.log(tokens, `${API_BASE_URL}/api/team/${tokens[0]}/config/openselect/whoami`)
+  const tokens = String(token).split('.')
+
+  // if (tokens.length != 2) {
+  //   throw new Error(`인증 실패: 알수없는 토큰 형식 (로그아웃 후 다시 시도해주세요. "slt logout")`)
+  // }
+  
   const r = await axios.get(`${API_BASE_URL}/api/team/${tokens[0]}/config/openselect/whoami`, {
     headers: {
       Authorization: token,
@@ -43,7 +47,7 @@ async function validate(token) {
   if (r?.data?.message != 'ok') {
     throw new Error(`인증 실패: ${r?.data?.message}`)
   }
-  console.log(chalk.blue('[INFO]'), '인증되었습니다.')
+  console.log(chalk.blue('[INFO]'), '로그인된 상태입니다.')
 }
 
 async function link() {
@@ -55,6 +59,8 @@ async function link() {
     CONFIG = check_config
 
     console.log(chalk.blue('[INFO]'), 'Using editorId at .select/project.json')
+
+    await validate(CONFIG.editorId)
     return
   }
 
@@ -86,8 +92,8 @@ async function link() {
     JSON.stringify(CONFIG, null, '  ')
   )
   
-  console.log('')
-  console.log(chalk.blue('[INFO]'), 'Sign in completed.')
+  // console.log('')
+  // console.log(chalk.blue('[INFO]'), 'Sign in completed.')
   
   const gitignore = path.join(process.env.CWD || process.cwd(), '.gitignore')
   if (fs.existsSync(gitignore)) {
@@ -146,7 +152,6 @@ async function init() {
   }
 }
 
-let counter = 1000
 const build_v2_spec = (item) => {
   let json = {
     menus: [],
@@ -164,11 +169,13 @@ const build_v2_spec = (item) => {
       ...doc,
     })
   }
-  json.menus.push({
-    path: $path,
-    default: true,
-    orderBy: $$path.name, 
-  })
+  if ($$path.name != 'index') {
+    json.menus.push({
+      path: $path,
+      default: true,
+      orderBy: $$path.name, 
+    })
+  }
   item.json.yml = YAML.dump(json)
 }
 
@@ -205,7 +212,7 @@ async function draft(event, path) {
     // }
   }
 
-  console.log(items)
+  // console.log(items)
 
   try {
     const tokens = CONFIG.editorId.split('.')
@@ -280,7 +287,7 @@ setTimeout(async () => {
     const boxen = (await import('boxen')).default
     const chalk = require('chalk')
     const pj = (await import('package-json')).default
-    const latest = await pj('openselect')
+    const latest = await pj('@selectfromuser/cli')
 		const semver = require('semver')
     if (semver.lt(Package.version, latest.version)) {
       console.log(boxen(`새로운 업데이트 가능 ${Package.version} -> ${ chalk.bold(latest.version)}\nRun ${ chalk.cyan('npm i -g selectfromuser') } to update`, {
@@ -337,10 +344,15 @@ program.command('logout').action(() => {
 })
 
 program.command('login').action(() => {
-  console.log(chalk.bgGreen.white(' selectfromuser.com '))
-  console.log('login')
-  link()
+  try {
+    link()
+  } catch (error) {
+    console.log(chalk.yellow('[ERROR]'), error.message)
+  }
 })
+
+// todo
+// program.command('whoami').action(async () => {})
 
 program.command('dev').action(async () => {
   try {
