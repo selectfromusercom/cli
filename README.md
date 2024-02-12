@@ -6,3 +6,20 @@
 
 제공
 selectfromuser.com 
+
+### 사용법
+
+- `npm i -g @selectfromuser/cli`
+- `slt login`
+- `slt init`
+- `slt` (`slt dev`와 동일)
+
+### YAML 파일
+
+로컬 결과물을 바로 볼수있도록 클라우드 해당 팀으로 preview URL이 발급됩니다.
+
+파일, 폴더 변경으로 watch-reload 합니다.
+
+### Directory-based routing
+
+내용 추가 예정
