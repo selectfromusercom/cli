@@ -2,7 +2,7 @@
 
 /**
  * @license
- * Copyright(c) 2021-2023 Selectfromuser Inc.
+ * Copyright(c) 2021-2024 Selectfromuser Inc.
  * All rights reserved.
  * https://www.selectfromuser.com
  * {team, support, jhlee}@selectfromuser.com, eces92@gmail.com
