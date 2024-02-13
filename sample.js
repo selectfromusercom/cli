@@ -98,7 +98,7 @@ blocks:
     name: 1
     axios:
       method: GET
-      url: ${global.__API_BASE}/sample-api/dashboard/users
+      url: ${global.API_BASE_URL}/sample-api/dashboard/users
     rowsPath: rows
     display: metric
     width: 100%
@@ -107,7 +107,7 @@ blocks:
   - type: http
     axios:
       method: GET
-      url: ${global.__API_BASE}/sample-api/dashboard/revenue
+      url: ${global.API_BASE_URL}/sample-api/dashboard/revenue
     rowsPath: rows
     display: metric
     width: 100%
@@ -120,7 +120,7 @@ blocks:
   - type: http
     axios:
       method: GET
-      url: ${global.__API_BASE}/sample-api/dashboard/rank
+      url: ${global.API_BASE_URL}/sample-api/dashboard/rank
     rowsPath: rows
 
     name: category
@@ -139,7 +139,7 @@ blocks:
   - type: http
     axios:
       method: GET
-      url: ${global.__API_BASE}/sample-api/dashboard/stores
+      url: ${global.API_BASE_URL}/sample-api/dashboard/stores
     rowsPath: rows
     name: 신규 가입 업체
     width: 100%
@@ -159,7 +159,7 @@ blocks:
   - type: http
     axios:
       method: GET
-      url: ${global.__API_BASE}/sample-api/dashboard/orders
+      url: ${global.API_BASE_URL}/sample-api/dashboard/orders
     rowsPath: rows
     name: 최근 방문자
     width: 100%

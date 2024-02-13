@@ -28,7 +28,8 @@ WEB_BASE_URL = process.env.TEST ? 'http://localhost:5173' : 'https://app.selectf
 
 /**
  * global var
- */
+*/
+global.API_BASE_URL = API_BASE_URL
 const Package = require('./package.json')
 let CONFIG = {}
 
@@ -164,16 +165,22 @@ const build_v2_spec = (item) => {
   const docs = YAML.loadAll(item.json.yml) || []
   const $$path = path.parse(item.name)
   const $path = $$path.dir + '/' + $$path.name
-  if (docs.length == 1) {
-
-  }
+  
+  
   for (const doc of docs) {
-    json.pages.push({
-      path: $path,
-      ...doc,
-    })
+    if ($$path.name == 'index') {
+      json = {
+        ...json,
+        ...doc,
+      }
+    } else {
+      json.pages.push({
+        path: $path,
+        ...doc,
+      })
+    }
   }
-  if ($$path.name != 'index') {
+  if ($$path.name != 'index' && !docs?.[0]?.path) {
     json.menus.push({
       path: $path,
       default: true,
@@ -201,9 +208,7 @@ async function draft(event, path) {
           yml: fs.readFileSync(file, 'utf8'),
         }
       }
-      if (file.includes('/')) {
-        build_v2_spec(item)
-      }
+      build_v2_spec(item)
       items.push(item)
     } 
     // else if (file.endsWith('.json2')) {
@@ -231,7 +236,6 @@ async function draft(event, path) {
   } catch (error) {
     console.log(error)
   }
-  console.log(event, path)
 }
 
 async function dev() {
@@ -294,7 +298,7 @@ setTimeout(async () => {
     const latest = await pj('@selectfromuser/cli')
 		const semver = require('semver')
     if (semver.lt(Package.version, latest.version)) {
-      console.log(boxen(`새로운 업데이트 가능 ${Package.version} -> ${ chalk.bold(latest.version)}\nRun ${ chalk.cyan('npm i -g selectfromuser') } to update`, {
+      console.log(boxen(`새로운 업데이트 가능 ${Package.version} -> ${ chalk.bold(latest.version)}\nRun ${ chalk.cyan('npm i -g @selectfromuser/cli') } to update`, {
         padding: 1,
         margin: 1,
         borderColor: 'green',
