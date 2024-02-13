@@ -50,7 +50,7 @@ async function validate(token) {
   console.log(chalk.blue('[INFO]'), '로그인된 상태입니다.')
 }
 
-async function link() {
+async function link(options) {
 
   const check_config_path = path.join(process.env.CWD || process.cwd(), '.select', 'project.json')
   if (fs.existsSync(check_config_path)) {
@@ -67,15 +67,19 @@ async function link() {
 
   console.log(chalk.blue('[INFO]'), '편집할 어드민을 입력해주세요. [가이드주소]')
   
-  const answer = await inquirer.prompt([
-    {
-      name: 'token',
-      message: 'Project Editor ID',
-      default: 'Enter your editor ID',
-    }
-  ])
-  
-  TOKEN = answer.token
+  if (options.token) {
+    TOKEN = options.token
+  } else {
+    const answer = await inquirer.prompt([
+      {
+        name: 'token',
+        message: 'Project Editor ID',
+        default: 'Enter your editor ID',
+      }
+    ])
+    
+    TOKEN = answer.token
+  }
   // validate
   await validate(TOKEN)
 
@@ -343,9 +347,11 @@ program.command('logout').action(() => {
   console.log(chalk.blue('[INFO]'), '로그아웃 했습니다.')
 })
 
-program.command('login').action(() => {
+program.command('login')
+.option('-t, --token <TOKEN>', 'EditorId')
+.action((options) => {
   try {
-    link()
+    link(options)
   } catch (error) {
     console.log(chalk.yellow('[ERROR]'), error.message)
   }
