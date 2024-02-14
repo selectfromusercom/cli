@@ -208,7 +208,9 @@ async function draft(event, path) {
           yml: fs.readFileSync(file, 'utf8'),
         }
       }
-      build_v2_spec(item)
+      if (file.startsWith('pages/')) {
+        build_v2_spec(item)
+      }
       items.push(item)
     } 
     // else if (file.endsWith('.json2')) {
